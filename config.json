@@ -1,0 +1,128 @@
+{
+    "URLS": {
+        "jupilerproleague": {
+            "scoore": "https://www.scooore.be/fr/sports/sports-hub/football/belgium/jupiler_pro_league",
+            "circus": "https://sport.circus.be/fr/sport/paris-sportifs/844/227875758",
+            "betfirst": "https://betfirst.dhnet.be/football/belgique-jupiler-pro-league/",
+            "napoleon": "https://www.napoleonsports.be/fr/sports#sports-hub/football/belgium/jupiler_pro_league",
+            "starcasino": "https://www.starcasinosport.be/fr/prematch-bets#/tree/all/66/0/2965/0/odds/byleague",
+            "betcenter": "https://www.betcenter.be/fr/football-belgique-division-1a",
+            "ladbrokes": "https://www.ladbrokes.be/fr/sports/#!/calcio/be-jupiler-league1/"
+        },
+        "premierleague": {
+            "scoore": "https://www.scooore.be/fr/sports/sports-hub/football/england/premier_league",
+            "circus": "https://sport.circus.be/fr/sport/paris-sportifs/844/54210798",
+            "betfirst": "https://betfirst.dhnet.be/football/angleterre-premier-league/",
+            "napoleon": "https://www.napoleonsports.be/fr/sports#sports-hub/football/england/premier_league",
+            "starcasino": "https://www.starcasinosport.be/fr/prematch-bets#/tree/all/66/0/2936/0/odds/byleague",
+            "betcenter": "https://www.betcenter.be/fr/angleterre/football-premier-league",
+            "ladbrokes": "https://www.ladbrokes.be/fr/sports/#!/calcio/ing-premier-league/"
+        },
+        "championship": {
+            "scoore": "https://www.scooore.be/fr/sports/sports-hub/football/england/the_championship",
+            "circus": "https://sport.circus.be/fr/sport/paris-sportifs/844/223888023",
+            "betfirst": "https://betfirst.dhnet.be/football/angleterre-championship/",
+            "napoleon": "https://www.napoleonsports.be/fr/sports#sports-hub/football/england/the_championship",
+            "starcasino": "https://www.starcasinosport.be/fr/prematch-bets#/tree/all/66/0/2937/0/odds/byleague",
+            "betcenter": "https://www.betcenter.be/fr/angleterre/football-championship"
+        },
+        "ligue1": {
+            "scoore": "https://www.scooore.be/fr/sports/sports-hub/football/france/ligue_1",
+            "circus": "https://sport.circus.be/fr/sport/paris-sportifs/844/54287323",
+            "betfirst": "https://betfirst.dhnet.be/football/france-ligue-1/",
+            "napoleon": "https://www.napoleonsports.be/fr/sports#sports-hub/football/france/ligue_1",
+            "starcasino": "https://www.starcasinosport.be/fr/prematch-bets#/tree/all/66/0/2943/0/odds/byleague",
+            "betcenter": "https://www.betcenter.be/fr/france/football-ligue-1",
+            "ladbrokes": "https://www.ladbrokes.be/fr/sports/#!/calcio/fr-ligue-1/"
+        },
+        "ligue2": {
+            "scoore": "https://www.scooore.be/fr/sports/sports-hub/football/france/ligue_2",
+            "circus": "https://sport.circus.be/fr/sport/paris-sportifs/844/54288081",
+            "betfirst": "https://betfirst.dhnet.be/football/france-ligue-2/",
+            "napoleon": "https://www.napoleonsports.be/fr/sports#sports-hub/football/france/ligue_2",
+            "starcasino": "https://www.starcasinosport.be/fr/prematch-bets#/tree/all/66/0/3143/0/odds/byleague",
+            "betcenter": "https://www.betcenter.be/fr/france/football-ligue-2"
+        },
+        "laliga": {
+            "scoore": "https://www.scooore.be/fr/sports/sports-hub/football/spain/la_liga",
+            "circus": "https://sport.circus.be/fr/sport/paris-sportifs/844/1397387603",
+            "betfirst": "https://betfirst.dhnet.be/football/espagne-la-liga/",
+            "napoleon": "https://www.napoleonsports.be/fr/sports#sports-hub/football/spain/la_liga",
+            "starcasino": "https://www.starcasinosport.be/fr/prematch-bets#/tree/all/66/0/2941/0/odds/byleague",
+            "betcenter": "https://www.betcenter.be/fr/espagne/football-laliga"
+        },
+        "bundesliga": {
+            "scoore": "https://www.scooore.be/fr/sports/sports-hub/football/germany/bundesliga",
+            "circus": "https://sport.circus.be/fr/sport/paris-sportifs/844/54297345",
+            "betfirst": "https://betfirst.dhnet.be/football/allemagne-1-bundesliga/",
+            "napoleon": "https://www.napoleonsports.be/fr/sports#sports-hub/football/germany/bundesliga",
+            "starcasino": "https://www.starcasinosport.be/fr/prematch-bets#/tree/all/66/0/2950/0/odds/byleague",
+            "betcenter": "https://www.betcenter.be/fr/allemagne/football-bundesliga"
+        }
+    },
+    "COOKIES_REF": {
+        "circus": "didomi-notice-agree-button",
+        "napoleon": "onetrust-accept-btn-handler",
+        "betcenter": "cookiescript_accept"
+    },
+    "CSS_SELECTORS": {
+        "scoore": ".KambiBC-sandwich-filter__event-list-item",
+        "circus": ".bet-event-main-row",
+        "betfirst": ".rj-ev-list__ev-card",
+        "napoleon": ".KambiBC-sandwich-filter__event-list-item",
+        "starcasino": "._asb_events-table-row",
+        "betcenter": ".game--upcoming, .game--live",
+        "ladbrokes": ".event-row"
+    },
+    "COL_LOCATORS": {
+        "scoore": [
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
+        "circus": [
+            2,
+            3,
+            5,
+            6,
+            7
+        ],
+        "betfirst": [
+            0,
+            1,
+            5,
+            7,
+            9
+        ],
+        "napoleon": [
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
+        "starcasino": [
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "betcenter": [
+            0,
+            1,
+            5,
+            7,
+            9
+        ],
+        "ladbrokes": [
+            2,
+            3,
+            4,
+            5,
+            6
+        ]
+    }
+}

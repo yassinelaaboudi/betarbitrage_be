@@ -1,0 +1,8 @@
+*.ipynb
+*.csv
+*.xlsx
+*.log
+*.exe
+__pycache__/
+environment.yml
+driver_location.json
