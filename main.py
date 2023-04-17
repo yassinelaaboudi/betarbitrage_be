@@ -21,38 +21,30 @@ if __name__ == "__main__":
     with open(CONFIG_PATH) as config:
         config = json.load(config)
     import subprocess
-    competitions = [i for i in config['URLS'].keys()]
-    competitions = ['laliga','ligue2']
 
+    competitions = [i for i in config["URLS"].keys()]
+    competitions = ["jupilerproleague", "ligue2"]
+    dict_driver = {}
     for competition in competitions:
-        subprocess.call(["python", "driver_init.py", competition])
-        driver = get_driver(competition, config, path_driver_location=DRIVER_PATH)
+        try:
+            logger.info("try getting the driver if exist")
+            dict_driver[competition] = get_driver(competition, config)
+        except ImportError as err:
+            logger.info("driver not exist - create new one")
+            subprocess.call(["python", "driver_init.py", competition])
+            dict_driver[competition] = get_driver(competition, config)
+        except Exception as err:
+            logger.exception("investigate")
+            print(err)
 
-    # # Open json config file
-    # with open(CONFIG_PATH) as config:
-    #     config = json.load(config)
-    # # Get keys between each teams
-    # df_keys = pd.read_excel("teams_correspondancy.xlsx")
-    # # Define competitions
-    # competitions = [i for i in config["URLS"].keys()]
-    # # define Date
-    # now = datetime.now()
-    # df_all_quotes = pd.DataFrame()
-    # for competition in competitions:
-    #     if competition not in ["ligue2", "laliga", "bundesliga"]:
-    #         continue
+    dict_quotes = {}
+    for competition, driver in dict_driver.items():
+        logger.info("get_quotes for competition")
 
-    #     logger.info(f"GETTING {competition}")
-    #     driver = get_driver(competition, config, path_driver_location=DRIVER_PATH)
-    #     driver.maximize_window()
-    #     dict_quotes = get_all_quotes(
-    #         driver, config["URLS"][competition], config["CSS_SELECTORS"]
-    #     )
-    #     dict_quotes_sc = standardize_quotes(dict_quotes, config["COL_LOCATORS"])
-    #     df_quotes = concatenate_quotes(dict_quotes_sc, df_keys=df_keys)
-    #     df_quotes["competition"] = competition
-    #     df_quotes["date"] = now
-    #     df_all_quotes = pd.concat([df_all_quotes, df_quotes], axis=0)
+        dict_quotes[competition] = get_all_quotes(
+            driver, config["URLS"][competition], config["CSS_SELECTORS"]
+        )
 
-    # df_all_quotes.to_csv("all_quotes.csv")
+    with open("all_quotes.json", "w") as f:
+        json.dump(dict_quotes, f, indent=4)
 

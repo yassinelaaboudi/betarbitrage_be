@@ -97,27 +97,25 @@ def init_driver(dict_url, dict_cookies):
             expand_starcasino(driver)
 
     logger.info(f"driver instanciated with all urls")
+
     return driver
 
 
 def get_driver(competition, dict_config, path_driver_location="driver_location.json"):
     """
-    Instantiate or get an existing driver for a given competition
+    get an existing driver for a given competition
     return a driver object
     """
     # Get all the drivers wich are open
     with open(path_driver_location, "r") as f:
         dict_driver_location = json.load(f)
+
     try:
+        # Get info to open the driver
         command_executor = dict_driver_location[competition]["command_executor"]
         session_id = dict_driver_location[competition]["session_id"]
-        desired_capabilities = dict_driver_location[competition]["desired_capabilities"]
     except KeyError:
-        dict_driver_location[competition] = {}
-        command_executor, session_id = (
-            "http://www.example.com",
-            "",
-        )
+        raise ImportError("The driver does not exist")
 
     try:
         logger.info("Looking for an existing driver")
@@ -136,55 +134,54 @@ def get_driver(competition, dict_config, path_driver_location="driver_location.j
         NoSuchWindowException,
         InvalidSessionIdException,
     ):
-        logger.warning("Session does not exist - create new one")
-        # Case when starting new session
-        driver = init_driver(
-            dict_config["URLS"][competition], dict_config["COOKIES_REF"]
-        )
-
-    finally:
-        logger.info("Updating driver location")
-        # Update driver data
-        dict_driver_location[competition][
-            "command_executor"
-        ] = driver.command_executor._url
-        dict_driver_location[competition]["session_id"] = driver.session_id
-        dict_driver_location[competition]["status"] = "active"
-
-    # Update the Location of the driver
-    with open(path_driver_location, "w") as f:
-        json.dump(dict_driver_location, f, indent=4)
-        logger.info(
-            f"driver coord updated {driver.session_id}-{driver.command_executor._url}"
-        )
-
+        raise ImportError("Impossible to get the driver")
     return driver
 
 
 if __name__ == "__main__":
-
+    # when you instantiate more than 1 driver in a loop, only the last one created
+    # can be recovered from another python terminal
+    # To change this behaviour you can launch the program from the terminal directly
     import argparse
 
+    # Get the path of config and driver_location
+    PATH_CONFIG = "config.json"
+    PATH_DRIVER_LOCATION = "driver_location.json"
+
+    # Instantiate parser
     parser = argparse.ArgumentParser(description="Launch selenium webdriver")
-    # Ajout d'un argument pour la chaîne de caractères en entrée
+    # Add one argument to enter to the program
     parser.add_argument(
         "competition",
         type=str,
         help="name of the competition where creating the driver",
     )
-    # Récupération des arguments en ligne de commande
+    # Get the args from the terminal
     args = parser.parse_args()
 
-    with open("config.json") as f:
+    # Get the parameters from config
+    with open(PATH_CONFIG) as f:
         config = json.load(f)
+    dict_url = config["URLS"][args.competition]
+    dict_cookies = config["COOKIES_REF"]
 
-    driver = get_driver(args.competition, dict_config=config)
+    # Instantiate the driver
+    logger.info(f"Instantiate driver for {args.competition}")
+    driver = init_driver(dict_url, dict_cookies)
+    # get the information from the driver and copy them to the driver_location.json
+    command_executor = driver.command_executor._url
+    session_id = driver.session_id
 
-    # test = "test2"
-    # # Test with 1 webdriver
-    # if test == "test1":
-    #     driver = get_driver("laliga", dict_config=config)
-    # elif test == "test2":
-    #     for compet in ["laliga", "ligue2"]:
-    #         driver = get_driver(compet, dict_config=config)
-    #         driver.close()
+    # Write driver coordinates into json PATH_DRIVER_LOCATION
+    logger.info("Writing driver coordinates")
+    with open(PATH_DRIVER_LOCATION, "r") as f:
+        dict_location = json.load(f)
+
+    dict_location[args.competition] = {
+        "command_executor": command_executor,
+        "session_id": session_id,
+        "status": "active",
+    }
+    with open(PATH_DRIVER_LOCATION, "w") as f:
+        json.dump(dict_location, f, indent=4)
+    logger.info("Driver coordinates written")

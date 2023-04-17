@@ -1,3 +1,4 @@
+import re
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.errorhandler import (
@@ -45,6 +46,8 @@ def get_quotes(driver, url, css_selector, max_wait=15):
             WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, css_selector))
             )
+
+
         except TimeoutException:
             raise NoSuchElementException(f"Unable to get the quotes for {url}")
 
@@ -52,7 +55,7 @@ def get_quotes(driver, url, css_selector, max_wait=15):
     elements = driver.find_elements_by_css_selector(css_selector)
 
     try:
-        return [i.text.split("\n") for i in elements]
+        return [re.split(r" - |\n", i.text) for i in elements]
     except StaleElementReferenceException:
         # You should refresh the driver, let's try after
         # Make it recursive maybe - or max_try = 3
