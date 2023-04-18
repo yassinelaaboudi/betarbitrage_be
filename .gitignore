@@ -3,6 +3,7 @@
 *.xlsx
 *.log
 *.exe
+data/*
 __pycache__/
 environment.yml
 *.json
