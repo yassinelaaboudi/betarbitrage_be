@@ -36,20 +36,24 @@ def get_quotes(driver, url, css_selector, max_wait=15):
 
     # Ensure that the element exist on the webpage - wait max_wait seconds
     try:
+        driver.set_window_size(1800, 1000)
         WebDriverWait(driver, max_wait).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, css_selector))
         )
     except TimeoutException:
-        logger.warning("Can not get the quote - try maximising window")
-        driver.maximize_window()
+        logger.warning("Can not get the quote - Change window size")
+        driver.set_window_size(3000, 2000)
         try:
             WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, css_selector))
             )
-
-
         except TimeoutException:
-            raise NoSuchElementException(f"Unable to get the quotes for {url}")
+            # raise NoSuchElementException(f"Unable to get the quotes for {url}")
+            logger.error(f"TimeoutException")
+            return []
+        except Exception as err:
+            logger.exception(f"{err}")
+            return []
 
     # find all elements regarding their CSS_SELECTORS
     elements = driver.find_elements_by_css_selector(css_selector)
@@ -59,8 +63,8 @@ def get_quotes(driver, url, css_selector, max_wait=15):
     except StaleElementReferenceException:
         # You should refresh the driver, let's try after
         # Make it recursive maybe - or max_try = 3
-        logger.error("probleme identifié mais non résolu")
-        raise StaleElementReferenceException
+        logger.error(f"Impossible to import the quotes for {url}")
+        return []
 
 
 def get_all_quotes(driver, dict_url, dict_selectors, max_wait=15):

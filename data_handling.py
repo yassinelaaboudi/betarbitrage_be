@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import logger as log
+
+logger = log.get_logger("data handling")
 
 
 def standardize_quotes(dict_quotes, col_locators):
@@ -24,28 +27,23 @@ def standardize_quotes(dict_quotes, col_locators):
     # Standardize each dataframes
     for name, li in dict_quotes.items():
 
+        logger.info(f"dataframe transformation for {name}")
+        if len(li) == 0:
+            logger.error(f"No data for {name}")
+            continue
+
         cols = ["home", "away", "1", "X", "2"]
         cols = [f"{name}_{i}" for i in cols]
 
-        # Name is concatenated by ' - ' for Ladbrokes
-        # If the match is today - day is not displayed so adding 'today'
-        if name == "ladbrokes":
-            df = pd.DataFrame([["today"] + i if len(i) == 11 else i for i in li])
-            df = pd.concat((df[2].str.split(" - ", expand=True), df[[3, 4, 5]]), axis=1)
-            df.columns = cols
-            dict_quotes_sc[name] = df
-        else:
-            # Transformation to dataFrame - starcasino remove "Endirect"
-            df = pd.DataFrame([[j for j in i if j != "EN DIRECT"] for i in li])
-            # rename columns
-            df_temp = df.iloc[:, col_locators[name]].copy()
-            df_temp.columns = cols
-            # drop columns without Quotes
-            del_row = df_temp[
-                df_temp.applymap(lambda x: x is None).sum(axis=1) > 0
-            ].index
-            df_temp.drop(index=del_row, inplace=True)
-            dict_quotes_sc[name] = df_temp
+        # Transformation to dataFrame - starcasino remove "Endirect"
+        df = pd.DataFrame([[j for j in i if j != "EN DIRECT"] for i in li])
+        # rename columns
+        df_temp = df.iloc[:, col_locators[name]].copy()
+        df_temp.columns = cols
+        # drop columns without Quotes
+        del_row = df_temp[df_temp.applymap(lambda x: x is None).sum(axis=1) > 0].index
+        df_temp.drop(index=del_row, inplace=True)
+        dict_quotes_sc[name] = df_temp
 
     return dict_quotes_sc
 
