@@ -9,3 +9,4 @@ __pycache__/
 environment.yml
 *.json
 !config.json
+!teams_correspondancy.csv

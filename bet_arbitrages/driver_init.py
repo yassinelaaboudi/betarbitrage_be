@@ -1,4 +1,6 @@
 import json
+import pathlib
+import os
 from urllib3.exceptions import MaxRetryError
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebDriver
@@ -49,7 +51,9 @@ def expand_starcasino(driver):
             logger.warning("It seems all data have been expanded - Double Check after")
 
 
-def init_driver(dict_url, dict_cookies):
+def init_driver(
+    dict_url, dict_cookies, headless=False, path_chromedriver="chrome_driver.exe"
+):
     """
     Initializes a Selenium driver and opens all URLs from a dictionary in separate tabs.
     If dict_cookies is not empty the driver will click automatically on the cookies button on the website to accept all cookies
@@ -63,16 +67,26 @@ def init_driver(dict_url, dict_cookies):
     - driver (webdriver.Chrome): A Selenium Chrome driver object.
     """
     # Instantiate a driver
-    logger.info("Initialise driver")
+    logger.info("Instantiate driver")
     chrome_options = Options()
     # Avoid certificates errors
     chrome_options.add_argument("--incognito")
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
+    if headless is True:
+        chrome_options.add_argument("--headless=new")
+    # Check with this options for further uses
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    # chrome_options.add_argument("--remote-debugging-port=9222")
     # Make sure it doesn't close windows when code is executed
     chrome_options.add_experimental_option("detach", True)
-    driver = webdriver.Chrome("chromedriver.exe", options=chrome_options)
+    # Instantiate driver
+    driver = webdriver.Chrome(
+        path_chromedriver,
+        options=chrome_options,
+        service_args=["--verbose", "--log-path=test.log"],
+    )
 
     for name, url in dict_url.items():
         logger.info(f"get {name}")
@@ -101,12 +115,14 @@ def init_driver(dict_url, dict_cookies):
     return driver
 
 
-def get_driver(competition, dict_config, path_driver_location="driver_location.json"):
+def get_driver(competition, path_driver_location="driver_location.json"):
     """
     get an existing driver for a given competition
     return a driver object
     """
     # Get all the drivers wich are open
+    # if the file does not exist raise an import error too
+
     with open(path_driver_location, "r") as f:
         dict_driver_location = json.load(f)
 
@@ -120,14 +136,17 @@ def get_driver(competition, dict_config, path_driver_location="driver_location.j
     try:
         logger.info("Looking for an existing driver")
         # If the driver already exist for a competition - Get it
+        chrome_options = Options()
+        chrome_options.add_argument("--headless=new")
         driver = webdriver.Remote(
-            command_executor=command_executor, desired_capabilities={},
+            command_executor=command_executor,
+            desired_capabilities=chrome_options.to_capabilities(),
         )
         driver.close()
         driver.session_id = session_id
         driver.title
         logger.info("driver already exist")
-    # If not existing Create new one
+    # If raise an error
     except (
         MaxRetryError,
         UnboundLocalError,
@@ -147,6 +166,9 @@ if __name__ == "__main__":
     # Get the path of config and driver_location
     PATH_CONFIG = "config.json"
     PATH_DRIVER_LOCATION = "driver_location.json"
+    PATH_CHROME_DRIVER = "chromedriver.exe"
+    if os.name != "nt":
+        PATH_CHROME_DRIVER = "/usr/local/bin/chromedriver"
 
     # Instantiate parser
     parser = argparse.ArgumentParser(description="Launch selenium webdriver")
@@ -167,15 +189,21 @@ if __name__ == "__main__":
 
     # Instantiate the driver
     logger.info(f"Instantiate driver for {args.competition}")
-    driver = init_driver(dict_url, dict_cookies)
+    driver = init_driver(
+        dict_url, dict_cookies, headless=True, path_chromedriver=PATH_CHROME_DRIVER
+    )
     # get the information from the driver and copy them to the driver_location.json
     command_executor = driver.command_executor._url
     session_id = driver.session_id
 
     # Write driver coordinates into json PATH_DRIVER_LOCATION
     logger.info("Writing driver coordinates")
-    with open(PATH_DRIVER_LOCATION, "r") as f:
-        dict_location = json.load(f)
+    try:
+        with open(PATH_DRIVER_LOCATION, "r") as f:
+            dict_location = json.load(f)
+    except FileNotFoundError:
+        logger.error("Driver Location File does not exist")
+        dict_location = {}
 
     dict_location[args.competition] = {
         "command_executor": command_executor,

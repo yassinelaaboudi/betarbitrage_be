@@ -23,8 +23,14 @@ def get_logger(name):
     ch.setLevel(logging.DEBUG)
 
     # Create file handler
-    fh = logging.FileHandler("logfile.log")
+    # Just get the last log
+    fh = logging.FileHandler(r"data/logfile.log", mode="w")
     fh.setLevel(logging.DEBUG)
+
+    # Create file handler for error
+    # Get all the Log for errors
+    fh_error = logging.FileHandler(r"data/logfile_error.log")
+    fh_error.setLevel(logging.ERROR)
 
     # Create formatter
     formatter = logging.Formatter(
@@ -32,9 +38,11 @@ def get_logger(name):
     )
     ch.setFormatter(formatter)
     fh.setFormatter(formatter)
+    fh_error.setFormatter(formatter)
 
     # Add handlers to logger
     logger.addHandler(ch)
     logger.addHandler(fh)
+    logger.addHandler(fh_error)
 
     return logger

@@ -4,7 +4,6 @@ import logger as log
 
 logger = log.get_logger("data handling")
 
-
 def standardize_quotes(dict_quotes, col_locators):
     """
     Standardizes a dictionary of raw quote (lists) by selecting and renaming columns according to
@@ -38,8 +37,17 @@ def standardize_quotes(dict_quotes, col_locators):
         # Transformation to dataFrame - starcasino remove "Endirect"
         df = pd.DataFrame([[j for j in i if j != "EN DIRECT"] for i in li])
         # rename columns
-        df_temp = df.iloc[:, col_locators[name]].copy()
-        df_temp.columns = cols
+        try:
+            df_temp = df.iloc[:, col_locators[name]].copy()
+            df_temp.columns = cols
+        # Some websites can include the game but the quotes are not available yet
+        # Insert copy of the DF in the log to investigate
+        except IndexError as err:
+            logger.error("Data has not been parse correctly")
+            logger.error("dataframe head\n{}".format(df.head().to_string()))
+            # For now return an empty DataFrame
+            df_temp = pd.DataFrame(columns=["home", "away", "1", "X", "2"])
+
         # drop columns without Quotes
         del_row = df_temp[df_temp.applymap(lambda x: x is None).sum(axis=1) > 0].index
         df_temp.drop(index=del_row, inplace=True)
@@ -71,6 +79,9 @@ def concatenate_quotes(dict_quotes_sc, df_keys):
         if index == 0:
             df_allquotes = df.copy()
             ref = name
+        elif df.shape[0] == 0:
+            logger.warning(f"No quotes for {name}")
+            continue
         else:
             # Add the Keys for home away regarding the first dataframe
             df_temp = df.merge(
