@@ -22,3 +22,11 @@ The goal of this project is solely for educational purposes and not for commerci
 
 ## Credit
 Thanks to chat gpt who helps me to write this file.
+
+## To Do
++ Let the container running and extracting data every m minutes
++ Fixing bugs which are quite random (* websites doesn't render data from time to time*) 
++ Functions to gather each run 
++ Some data analysis of the quotes
++ Bot who warns you when a surebet is possible
+
