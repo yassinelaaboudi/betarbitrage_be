@@ -51,6 +51,28 @@ def expand_starcasino(driver):
             logger.warning("It seems all data have been expanded - Double Check after")
 
 
+def set_chrome_properties(headless):
+    """
+    Function used to set the chrome properties of a selenium web driver
+    Avoid repetetion where we instantiate it or when creating a remote one
+    """
+    chrome_options = Options()
+    # Avoid certificates errors
+    chrome_options.add_argument("--incognito")
+    chrome_options.add_argument("--ignore-certificate-errors")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+    if headless is True:
+        chrome_options.add_argument("--headless=new")
+    # Check with this options for further uses
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    # chrome_options.add_argument("--remote-debugging-port=9222")
+    # Make sure it doesn't close windows when code is executed
+    chrome_options.add_experimental_option("detach", True)
+
+    return chrome_options
+
+
 def init_driver(
     dict_url, dict_cookies, headless=False, path_chromedriver="chrome_driver.exe"
 ):
@@ -68,19 +90,8 @@ def init_driver(
     """
     # Instantiate a driver
     logger.info("Instantiate driver")
-    chrome_options = Options()
-    # Avoid certificates errors
-    chrome_options.add_argument("--incognito")
-    chrome_options.add_argument("--ignore-certificate-errors")
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-    if headless is True:
-        chrome_options.add_argument("--headless=new")
-    # Check with this options for further uses
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    # chrome_options.add_argument("--remote-debugging-port=9222")
-    # Make sure it doesn't close windows when code is executed
-    chrome_options.add_experimental_option("detach", True)
+    # Get the chrome options
+    chrome_options = set_chrome_properties(headless)
     # Instantiate driver
     driver = webdriver.Chrome(
         path_chromedriver,
@@ -136,8 +147,8 @@ def get_driver(competition, path_driver_location="driver_location.json"):
     try:
         logger.info("Looking for an existing driver")
         # If the driver already exist for a competition - Get it
-        chrome_options = Options()
-        chrome_options.add_argument("--headless=new")
+        chrome_options = set_chrome_properties(headless=True)
+        # Get the remote driver
         driver = webdriver.Remote(
             command_executor=command_executor,
             desired_capabilities=chrome_options.to_capabilities(),

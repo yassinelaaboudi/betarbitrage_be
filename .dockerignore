@@ -4,6 +4,7 @@
 *.log
 *.exe
 data/*
+data_docker/
 __depr__/
 __pycache__/
 environment.yml

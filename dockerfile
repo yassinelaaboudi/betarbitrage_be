@@ -4,8 +4,14 @@ FROM python:3.9-slim-buster
 # Define working directory in container
 WORKDIR /app
 
+# Set the time zone to Europe/Paris
+ENV TZ=Europe/Paris
+
 # Download necessary Linux libraries
-RUN apt-get update && apt-get install -y wget sudo gnupg curl
+# Set the time zone to the Belgian one
+RUN apt-get update && apt-get install -y wget sudo gnupg curl tzdata  && \
+    ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
 # from https://nander.cc/using-selenium-within-a-docker-container
 # Adding trusting keys to apt for repositories
 RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -34,4 +40,4 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-CMD ["python", "./bet_arbitrages/main.py"]
+CMD ["python", "./bet_arbitrages/main.py"] -- workers 1 -- threads 8
