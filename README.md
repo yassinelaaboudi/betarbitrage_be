@@ -25,8 +25,10 @@ Thanks to chat gpt who helps me to write this file.
 
 ## To Do
 + Let the container running and extracting data every m minutes
-+ Fixing bugs which are quite random (* websites doesn't render data from time to time*) 
-+ Functions to gather each run 
++ Fixing bugs which are quite random (*websites doesn't render data from time to time*) 
++ Functions to gather csv after each run into one database
++ Datatransformation --> Avoid repetition with datecolumn like *valid_from*, *valid_until*  
 + Some data analysis of the quotes
 + Bot who warns you when a surebet is possible
++ ???
 
